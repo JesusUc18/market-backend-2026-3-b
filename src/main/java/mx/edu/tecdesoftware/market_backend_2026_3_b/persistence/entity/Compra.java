@@ -24,4 +24,12 @@ public class Compra {
     private String comentario;
 
     private String estado;
+
+    public Integer getIdCompra() {
+        return idCompra;
+    }
+
+    public void setIdCompra(Integer idCompra) {
+        this.idCompra = idCompra;
+    }
 }
