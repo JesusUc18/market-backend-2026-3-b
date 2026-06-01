@@ -14,6 +14,13 @@ public class Producto {
     private Integer idProducto;
 
     private String nombre;
+    private Boolean estado;
+
+    //Relación con categoría
+    //Muchos productos pueden pertenecer a una categoría
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", insertable = false, updatable = false)
+    private Categoria categoria;
 
     @Column(name = "id_categoria")
     private String idCategoria;
@@ -26,8 +33,6 @@ public class Producto {
 
     @Column(name = "cantidad_stock")
     private Integer cantidadStock;
-
-    private Boolean estado;
 
     public Integer getIdProducto() {
         return idProducto;
