@@ -16,6 +16,14 @@ public class Producto {
     private String nombre;
     private Boolean estado;
 
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
     //Relación con categoría
     //Muchos productos pueden pertenecer a una categoría
     @ManyToOne
