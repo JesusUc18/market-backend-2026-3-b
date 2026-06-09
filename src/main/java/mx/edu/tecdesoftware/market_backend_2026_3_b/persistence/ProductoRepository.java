@@ -2,37 +2,54 @@ package mx.edu.tecdesoftware.market_backend_2026_3_b.persistence;
 
 import java.util.List;
 
+import mx.edu.tecdesoftware.market_backend_2026_3_b.domain.Product;
+import mx.edu.tecdesoftware.market_backend_2026_3_b.domain.repository.ProductRepository;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.crud.IProductoCrudRepository;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.entity.Producto;
+import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.mapper.ProductMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ProductoRepository {
+@Repository
+public class ProductoRepository implements ProductRepository {
+
     public IProductoCrudRepository productoCrudRepository;
 
-    public List<Producto> getAll() {
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    @Autowired
+    private ProductMapper productMapper;
+
+    public List<Product> getAll() {
         //Se "castea" Iterable a la lista
-        return (List<Producto>) productoCrudRepository.findAll();
+        List<Producto> productos = (List<Producto>) productoCrudRepository.findAll();
+        return productMapper.toProducts(productos);
     }
 
-    public List<Producto> getByCategoria(int idCategoria) {
-        return productoCrudRepository.findByCantidadOrderByNombreAsc(idCategoria);
+    public Optional<List<Product>> getByCategory(int categoryId) {
+        List<Producto> productos = productoCrudRepository.findByCantidadOrderByNombreAsc(categoryId);
+        return Optional.of(productMapper.toProducts(productos));
     }
 
-    public Optional<List<Producto>> getEscasos(int cantidad){
-        return productoCrudRepository.findByCantidadStockLessThanAndEstado(cantidad, true);
+    public Optional<List<Product>> getByScarceProducts(int quantity) {
+        Optional<List<Producto>> productos = productoCrudRepository.findByCantidadStockLessThanAndEstado(quantity, true);
+        return Optional.of(productMapper.toProducts(productos.get()));
     }
 
-    public Optional<Producto> getById(int idProducto) {
-        return productoCrudRepository.findById(idProducto);
+    public Optional<Product> getProduct(int productId) {
+        return productoCrudRepository.findById(productId).map(producto -> productMapper.toProduct(producto));
     }
 
-    public Producto addProducto(Producto producto) {
-        return productoCrudRepository.save(producto);
+    public Product save(Product product){
+        Producto producto = productMapper.toProducto(product);
+        return productMapper.toProduct(productoCrudRepository.save(producto));
     }
 
-    public void deleteProducto(int idProducto) {
-        productoCrudRepository.deleteById(idProducto);
+    public void delete(int productId) {
+        productoCrudRepository.deleteById(productId);
     }
 }
