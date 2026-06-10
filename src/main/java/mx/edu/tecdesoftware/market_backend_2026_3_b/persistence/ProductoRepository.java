@@ -16,10 +16,8 @@ import java.util.Optional;
 @Repository
 public class ProductoRepository implements ProductRepository {
 
-    public IProductoCrudRepository productoCrudRepository;
-
     @Autowired
-    private ProductoRepository productoRepository;
+    private IProductoCrudRepository productoCrudRepository;
 
     @Autowired
     private ProductMapper productMapper;
@@ -35,7 +33,7 @@ public class ProductoRepository implements ProductRepository {
         return Optional.of(productMapper.toProducts(productos));
     }
 
-    public Optional<List<Product>> getByScarceProducts(int quantity) {
+    public Optional<List<Product>> getScarceProducts(int quantity) {
         Optional<List<Producto>> productos = productoCrudRepository.findByCantidadStockLessThanAndEstado(quantity, true);
         return Optional.of(productMapper.toProducts(productos.get()));
     }

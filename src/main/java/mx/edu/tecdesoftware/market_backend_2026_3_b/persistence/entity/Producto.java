@@ -14,6 +14,15 @@ public class Producto {
     private Integer idProducto;
 
     private String nombre;
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
     private Boolean estado;
 
     public Categoria getCategoria() {
@@ -33,11 +42,35 @@ public class Producto {
     @Column(name = "id_categoria")
     private String idCategoria;
 
+    public String getCodigoBarras() {
+        return codigoBarras;
+    }
+
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras = codigoBarras;
+    }
+
     @Column(name = "codigo_barras")
     private String codigoBarras;
 
+    public Double getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public void setPrecioVenta(Double precioVenta) {
+        this.precioVenta = precioVenta;
+    }
+
     @Column(name = "precio_venta")
     private Double precioVenta;
+
+    public Integer getCantidadStock() {
+        return cantidadStock;
+    }
+
+    public void setCantidadStock(Integer cantidadStock) {
+        this.cantidadStock = cantidadStock;
+    }
 
     @Column(name = "cantidad_stock")
     private Integer cantidadStock;
@@ -48,5 +81,13 @@ public class Producto {
 
     public void setIdProducto(Integer idProducto) {
         this.idProducto = idProducto;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 }
