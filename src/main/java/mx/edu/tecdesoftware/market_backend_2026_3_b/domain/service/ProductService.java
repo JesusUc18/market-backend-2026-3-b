@@ -18,11 +18,12 @@ public class ProductService {
         return productRepository.getAll();
     }
 
-    public Optional<Product> getProduct(int productid) {
-        return productRepository.getProduct(productid);
+    public Optional<Product> getProduct(int productId) {
+        return productRepository.getProduct(productId);
     }
-    public Optional<List<Product>> getByCategory(int categoryid) {
-        return productRepository.getByCategory(categoryid);
+
+    public Optional<List<Product>> getByCategory(int categoryId) {
+        return productRepository.getByCategory(categoryId);
     }
 
     public Product save(Product product) {
@@ -30,13 +31,9 @@ public class ProductService {
     }
 
     public boolean delete(int productId) {
-        if (getProduct(productId).isPresent()) {
+        return getProduct(productId).map(product -> {
             productRepository.delete(productId);
             return true;
-        } else {
-            return false;
-        }
+        }).orElse(false);
     }
-
-
 }

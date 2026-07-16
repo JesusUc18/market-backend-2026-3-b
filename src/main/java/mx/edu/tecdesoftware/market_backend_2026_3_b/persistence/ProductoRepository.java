@@ -1,14 +1,14 @@
 package mx.edu.tecdesoftware.market_backend_2026_3_b.persistence;
 
-import java.util.List;
-
 import mx.edu.tecdesoftware.market_backend_2026_3_b.domain.Product;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.domain.repository.ProductRepository;
-import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.crud.IProductoCrudRepository;
+import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.crud.CompraProductoCrudRepository;
+import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.crud.ProductoCrudRepository;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.entity.Producto;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,37 +17,52 @@ import java.util.Optional;
 public class ProductoRepository implements ProductRepository {
 
     @Autowired
-    private IProductoCrudRepository productoCrudRepository;
+    private ProductoCrudRepository productoCrudRepository;
 
     @Autowired
-    private ProductMapper productMapper;
+    private CompraProductoCrudRepository compraProductoCrudRepository;
 
-    public List<Product> getAll() {
-        //Se "castea" Iterable a la lista
-        List<Producto> productos = (List<Producto>) productoCrudRepository.findAll();
-        return productMapper.toProducts(productos);
+    @Autowired
+    private ProductMapper mapper;
+
+    public List<Product> getAll(){
+        // Se castea Iterable a lista
+        return mapper.toProducts((List<Producto>) productoCrudRepository.findAll());
     }
 
+    @Override
     public Optional<List<Product>> getByCategory(int categoryId) {
-        List<Producto> productos = productoCrudRepository.findByCantidadOrderByNombreAsc(categoryId);
-        return Optional.of(productMapper.toProducts(productos));
+        List<Producto> productos =
+                productoCrudRepository.findByIdCategoriaOrderByNombreAsc(
+                        Integer.valueOf(categoryId)
+                );
+
+        return Optional.of(mapper.toProducts(productos));
     }
 
-    public Optional<List<Product>> getScarceProducts(int quantity) {
-        Optional<List<Producto>> productos = productoCrudRepository.findByCantidadStockLessThanAndEstado(quantity, true);
-        return Optional.of(productMapper.toProducts(productos.get()));
+    public Optional<List<Product>> getScarceProducts(int quantity){
+        return productoCrudRepository.findByCantidadStockLessThanAndEstado(quantity, true)
+                .map(productos -> mapper.toProducts(productos));
     }
 
-    public Optional<Product> getProduct(int productId) {
-        return productoCrudRepository.findById(productId).map(producto -> productMapper.toProduct(producto));
+    public Optional<Product> getProduct(int productId){
+        return productoCrudRepository.findById(productId)
+                .map(producto -> mapper.toProduct(producto));
     }
 
     public Product save(Product product){
-        Producto producto = productMapper.toProducto(product);
-        return productMapper.toProduct(productoCrudRepository.save(producto));
+        Producto producto = mapper.toProducto(product);
+        producto.setIdProducto(null);
+        return mapper.toProduct(productoCrudRepository.save(producto));
     }
 
-    public void delete(int productId) {
+    @Transactional
+    public void delete(int productId){
+        productoCrudRepository.findById(productId)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Producto no encontrado"));
+
+        compraProductoCrudRepository.deleteByIdIdProducto(productId);
         productoCrudRepository.deleteById(productId);
     }
+
 }

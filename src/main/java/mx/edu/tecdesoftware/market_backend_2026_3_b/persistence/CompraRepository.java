@@ -2,7 +2,7 @@ package mx.edu.tecdesoftware.market_backend_2026_3_b.persistence;
 
 import mx.edu.tecdesoftware.market_backend_2026_3_b.domain.Purchase;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.domain.repository.PurchaseRepository;
-import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.crud.ICompraCrudRepository;
+import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.crud.CompraCrudRepository;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.entity.Compra;
 import mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.mapper.PurchaseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,31 +15,31 @@ import java.util.Optional;
 public class CompraRepository implements PurchaseRepository {
 
     @Autowired
-    private ICompraCrudRepository compraCrudRepository;
+    private CompraCrudRepository compraCrudRepository;
 
     @Autowired
-    private PurchaseMapper purchaseMapper;
+    private PurchaseMapper mapper;
 
+    @Override
     public List<Purchase> getAll() {
-        //Se "castea" Iterable a la lista
-        List<Compra> compras = (List<Compra>) compraCrudRepository.findAll();
-        return purchaseMapper.toPurchases(compras);
+        return mapper.toPurchases((List<Compra>) compraCrudRepository.findAll());
     }
 
-    public Optional<List<Purchase>> getByClientId(String clientId) {
+    @Override
+    public Optional<List<Purchase>> getByClient(int clientId) {
         List<Compra> compras = compraCrudRepository.findByIdCliente(clientId);
-        return Optional.of(purchaseMapper.toPurchases(compras));
+        return Optional.of(mapper.toPurchases(compras));
     }
 
+    @Override
     public Purchase save(Purchase purchase) {
-        Compra compra = purchaseMapper.toCompra(purchase);
+        Compra compra = mapper.toCompra(purchase);
+        compra.setIdCompra(null);
 
-        //Crítico: cada CompraProducto debe referenciar a su Compra principal
-        //antes de delegar el guardado (integridad referencial / @MapsId).
         if (compra.getProductos() != null) {
             compra.getProductos().forEach(producto -> producto.setCompra(compra));
         }
 
-        return purchaseMapper.toPurchase(compraCrudRepository.save(compra));
+        return mapper.toPurchase(compraCrudRepository.save(compra));
     }
 }

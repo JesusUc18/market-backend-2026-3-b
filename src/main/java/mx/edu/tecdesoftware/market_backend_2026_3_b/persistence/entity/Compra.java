@@ -2,6 +2,7 @@ package mx.edu.tecdesoftware.market_backend_2026_3_b.persistence.entity;
 
 import jakarta.persistence.*;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,8 +12,36 @@ public class Compra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "id_compra")
+    @Column(name = "id_compra")
     private Integer idCompra;
+
+    @Column(name = "id_cliente")
+    private String idCliente;
+
+    private LocalDateTime fecha;
+
+    @Column(name = "medio_pago")
+    private String medioPago;
+
+    private String comentario;
+
+    private String estado;
+
+    // Relacion con cliente: Muchas compras para un cliente
+    @ManyToOne
+    @JoinColumn(name = "id_cliente", insertable = false, updatable = false)
+    private Cliente cliente;
+
+    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL)
+    private List<CompraProducto> productos;
+
+    public Integer getIdCompra() {
+        return idCompra;
+    }
+
+    public void setIdCompra(Integer idCompra) {
+        this.idCompra = idCompra;
+    }
 
     public String getIdCliente() {
         return idCliente;
@@ -22,9 +51,6 @@ public class Compra {
         this.idCliente = idCliente;
     }
 
-    @Column (name = "id_cliente")
-    private String idCliente;
-
     public LocalDateTime getFecha() {
         return fecha;
     }
@@ -32,8 +58,6 @@ public class Compra {
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
-
-    private LocalDateTime fecha;
 
     public String getMedioPago() {
         return medioPago;
@@ -43,9 +67,6 @@ public class Compra {
         this.medioPago = medioPago;
     }
 
-    @Column (name = "medio_pago")
-    private String medioPago;
-
     public String getComentario() {
         return comentario;
     }
@@ -54,8 +75,6 @@ public class Compra {
         this.comentario = comentario;
     }
 
-    private String comentario;
-
     public String getEstado() {
         return estado;
     }
@@ -63,8 +82,6 @@ public class Compra {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-
-    private String estado;
 
     public Cliente getCliente() {
         return cliente;
@@ -80,21 +97,5 @@ public class Compra {
 
     public void setProductos(List<CompraProducto> productos) {
         this.productos = productos;
-    }
-
-    //Relación con cliente: Muchas compras para un cliente
-    @ManyToOne
-    @JoinColumn(name = "id_cliente")
-    private Cliente cliente;
-
-    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL)
-    private List<CompraProducto> productos;
-
-    public Integer getIdCompra() {
-        return idCompra;
-    }
-
-    public void setIdCompra(Integer idCompra) {
-        this.idCompra = idCompra;
     }
 }

@@ -2,19 +2,10 @@ package mx.edu.tecdesoftware.market_backend_2026_3_b.domain;
 
 public class PurchaseItem {
 
-    private int purchaseId;
     private int productId;
     private int quantity;
     private double total;
     private boolean active;
-
-    public int getPurchaseId() {
-        return purchaseId;
-    }
-
-    public void setPurchaseId(int purchaseId) {
-        this.purchaseId = purchaseId;
-    }
 
     public int getProductId() {
         return productId;
@@ -40,7 +31,7 @@ public class PurchaseItem {
         this.total = total;
     }
 
-    public boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
