@@ -30,6 +30,13 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public Optional<Product> update(int productId, Product product) {
+        return getProduct(productId).map(existing -> {
+            product.setProductId(productId);
+            return productRepository.save(product);
+        });
+    }
+
     public boolean delete(int productId) {
         return getProduct(productId).map(product -> {
             productRepository.delete(productId);
