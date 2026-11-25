@@ -64,7 +64,7 @@ public class ProductController {
     public ResponseEntity<List<Product>> getByCategory(
             @Parameter (description = "Category ID",
                     example = "7", required = true)
-            int categoryId) {
+            @PathVariable("categoryId") int categoryId) {
         return productService.getByCategory(categoryId)
                 .filter(products -> !products.isEmpty())
                 .map(ResponseEntity::ok)
